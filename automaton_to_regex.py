@@ -20,3 +20,16 @@ def delete_state(automaton, state):
     redirected so that all possible combinations of previous states and next
     states from this state will have a direct path which has a regex label."""
     del automaton[state]
+
+
+def reverse_path(automaton):
+    """Reverse the directed path of the states, that is, the previous state
+    will be the next state and the next state will be the previous state."""
+    reverse_automaton = {}
+    for name, label_states in automaton.items():
+        for label, next_states in label_states.items():
+            for state in next_states:
+                lb = reverse_automaton.setdefault(state, {})
+                s = lb.setdefault(label, set())
+                s.add(name)
+    return reverse_automaton

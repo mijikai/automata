@@ -36,6 +36,28 @@ class DeleteStateTest(unittest.TestCase):
         delete_state(automaton, 'a')
         self.assertDictEqual(automaton, {})
 
+    @unittest.skip('Skip for the implementation of reverse_path')
+    def test_three_state(self):
+        """Test the deletion of the middle state."""
+        automaton = {
+                'a': {'0': {'b'}},
+                'b': {'1': {'c'}},
+                'c': {},
+        }
+        final = {
+                'a': {'01': {'c'}},
+                'c': {},
+        }
+        delete_state(automaton, 'b')
+        self.assertDictEqual(automaton, final)
+
+
+class ReversePathTest(unittest.TestCase):
+    def test_looping_state(self):
+        """The reverse of looping state is the looping state itself."""
+        automaton = {'a': {'0': {'a'}}}
+        self.assertDictEqual(reverse_path(automaton), automaton)
+
 
 if __name__ == '__main__':
     unittest.main()
