@@ -13,3 +13,10 @@ def auto2regex(automaton, start_state, final_states):
             if s == start_state:
                 result.append('{}*'.format(label))
     return ''.join(result)
+
+
+def delete_state(automaton, state):
+    """Delete a state from the automaton. All states connected to it will be
+    redirected so that all possible combinations of previous states and next
+    states from this state will have a direct path which has a regex label."""
+    del automaton[state]
