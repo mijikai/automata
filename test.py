@@ -89,5 +89,16 @@ class ReversePathTest(unittest.TestCase):
         self.assertDictEqual(reverse_path(automaton), final)
 
 
+    def test_dangling_state(self):
+        """Test for invalid graph which has a set of next state that is not in
+        the graph."""
+        automaton = {
+                'a': {'0': {'b'}},
+                'b': {'1': {'c'}},
+                'c': {'2': {'d'}},
+        }
+        self.assertRaises(KeyError, reverse_path, automaton)
+
+
 if __name__ == '__main__':
     unittest.main()
