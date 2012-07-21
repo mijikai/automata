@@ -26,10 +26,12 @@ def reverse_path(automaton):
     """Reverse the directed path of the states, that is, the previous state
     will be the next state and the next state will be the previous state."""
     reverse_automaton = {}
+    for name in automaton:
+        reverse_automaton[name] = {}
+
     for name, label_states in automaton.items():
         for label, next_states in label_states.items():
             for state in next_states:
-                lb = reverse_automaton.setdefault(state, {})
-                s = lb.setdefault(label, set())
+                s = reverse_automaton[state].setdefault(label, set())
                 s.add(name)
     return reverse_automaton

@@ -58,6 +58,20 @@ class ReversePathTest(unittest.TestCase):
         automaton = {'a': {'0': {'a'}}}
         self.assertDictEqual(reverse_path(automaton), automaton)
 
+    def test_three_state(self):
+        """Test an automaton that has three states."""
+        automaton = {
+                'a': {'0': {'b'}},
+                'b': {'1': {'c'}},
+                'c': {},
+        }
+        final = {
+                'c': {'1': {'b'}},
+                'b': {'0': {'a'}},
+                'a': {},
+        }
+        self.assertDictEqual(reverse_path(automaton), final)
+
 
 if __name__ == '__main__':
     unittest.main()
