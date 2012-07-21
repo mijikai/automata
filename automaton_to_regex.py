@@ -19,6 +19,37 @@ def delete_state(automaton, state):
     """Delete a state from the automaton. All states connected to it will be
     redirected so that all possible combinations of previous states and next
     states from this state will have a direct path which has a regex label."""
+    rev = reverse_path(automaton)
+    looping_alter = []
+    for prev_label, prev_set in rev[state].items():
+        if state in prev_set:
+            looping_alter.append('{}*'.format(prev_label))
+
+    looping = '|'.join(looping_alter)
+
+    for prev_label, prev_set in rev[state].items():
+        for prev_state in prev_set:
+            automaton[prev_state][prev_label].remove(state)
+            # Delete labels that points to nothing.
+            if not automaton[prev_state][prev_label]:
+                del automaton[prev_state][prev_label]
+
+        # Remove the references of state so that
+        # looping will be includedd once
+        if state in prev_set:
+            prev_set.remove(state)
+
+        # Build all possible paths from the states going to this state to the
+        # states after this state. The label will be regex that simulate the
+        # paths as if that state is there.
+        for next_label, next_set in tuple(automaton[state].items()):
+            new_label = '{}{}{}'.format(prev_label, looping, next_label)
+            for prev_state in prev_set:
+                prev_paths = automaton[prev_state]
+                new_set = prev_paths.setdefault(new_label, set())
+
+                for next_state in next_set:
+                    new_set.add(next_state)
     del automaton[state]
 
 
