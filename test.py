@@ -10,6 +10,14 @@ class Auto2Regex(unittest.TestCase):
         }
         self.assertEqual(auto2regex(automaton, 'a', {'a'}), '')
 
+    def test_one_state_loop(self):
+        """Test for the automaton that accepts only one input of infinite
+        length."""
+        automaton = {
+                'a': {'0': {'a'}},
+        }
+        self.assertEqual(auto2regex(automaton, 'a', {'a'}), '0*')
+
 
 if __name__ == '__main__':
     unittest.main()
