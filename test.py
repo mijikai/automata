@@ -72,6 +72,21 @@ class ReversePathTest(unittest.TestCase):
         }
         self.assertDictEqual(reverse_path(automaton), final)
 
+    def test_branching(self):
+        automaton = {
+                'a': {'0': {'b'}},
+                'b': {'1': {'c'}, '2': {'d'}},
+                'c': {},
+                'd': {},
+        }
+        final = {
+                'd': {'2': {'b'}},
+                'c': {'1': {'b'}},
+                'b': {'0': {'a'}},
+                'a': {},
+        }
+        self.assertDictEqual(reverse_path(automaton), final)
+
 
 if __name__ == '__main__':
     unittest.main()
