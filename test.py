@@ -85,6 +85,22 @@ class DeleteStateTest(unittest.TestCase):
         delete_state(automaton, 'b')
         self.assertDictEqual(automaton, final)
 
+    def test_branch(self):
+        """Test the deletion of state that has a label going to
+        multiple states."""
+        automaton = {
+                'a': {'0': {'b'}},
+                'b': {'1': {'c', 'd'}},
+                'c': {},
+                'd': {},
+        }
+        final = {'a': {'01': {'c', 'd'}},
+                'c': {},
+                'd': {},
+        }
+        delete_state(automaton, 'b')
+        self.assertDictEqual(automaton, final)
+
     def test_branching_loop(self):
         """Test the deletion of state that has alternatives to itself."""
         automaton = {
