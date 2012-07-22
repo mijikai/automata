@@ -24,8 +24,13 @@ def delete_state(automaton, state):
     for prev_label, prev_set in rev[state].items():
         if state in prev_set:
             looping_alter.append('{}*'.format(prev_label))
+            prev_set.remove(state)
 
     looping = '|'.join(looping_alter)
+
+    for next_set in automaton[state].values():
+        if state in next_set:
+            next_set.remove(state)
 
     for prev_label, prev_set in rev[state].items():
         for prev_state in prev_set:
@@ -34,21 +39,17 @@ def delete_state(automaton, state):
             if not automaton[prev_state][prev_label]:
                 del automaton[prev_state][prev_label]
 
-        # Remove the references of state so that
-        # looping will be includedd once
-        if state in prev_set:
-            prev_set.remove(state)
 
         # Build all possible paths from the states going to this state to the
         # states after this state. The label will be regex that simulate the
         # paths as if that state is there.
         for next_label, next_set in tuple(automaton[state].items()):
             new_label = '{}{}{}'.format(prev_label, looping, next_label)
-            for prev_state in prev_set:
-                prev_paths = automaton[prev_state]
-                new_set = prev_paths.setdefault(new_label, set())
 
-                for next_state in next_set:
+            for next_state in next_set:
+                for prev_state in prev_set:
+                    prev_paths = automaton[prev_state]
+                    new_set = prev_paths.setdefault(new_label, set())
                     new_set.add(next_state)
     del automaton[state]
 

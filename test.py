@@ -64,6 +64,27 @@ class DeleteStateTest(unittest.TestCase):
         delete_state(automaton, 'b')
         self.assertDictEqual(automaton, final)
 
+    def test_delete_end(self):
+        """Test the deletion of a state that has no successor."""
+        automaton = {
+                'a': {'0': {'b'}},
+                'b': {},
+        }
+        final = {'a': {}}
+        delete_state(automaton, 'b')
+        self.assertDictEqual(automaton, final)
+
+
+    def test_two_loop(self):
+        """Test the deletion of state that has two paths leading to itself."""
+        automaton = {
+                'a': {'0': {'b'}},
+                'b': {'1': {'b'}, '2': {'b'}},
+        }
+        final = {'a': {}}
+        delete_state(automaton, 'b')
+        self.assertDictEqual(automaton, final)
+
 
 class ReversePathTest(unittest.TestCase):
     def test_looping_state(self):
