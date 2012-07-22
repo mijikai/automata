@@ -85,6 +85,17 @@ class DeleteStateTest(unittest.TestCase):
         delete_state(automaton, 'b')
         self.assertDictEqual(automaton, final)
 
+    def test_two_state_loop_each(self):
+        """Test the deletion of the second stat which goes back to the first
+        one."""
+        automaton = {
+                'a': {'0': {'a'}, '1': {'b'}},
+                'b': {'2': {'b'}, '3': {'a'}},
+        }
+        final = {'a': {'0': {'a'}, '12*3': {'a'}}}
+        delete_state(automaton, 'b')
+        self.assertDictEqual(automaton, final)
+
 
 class ReversePathTest(unittest.TestCase):
     def test_looping_state(self):
