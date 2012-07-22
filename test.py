@@ -74,17 +74,6 @@ class DeleteStateTest(unittest.TestCase):
         delete_state(automaton, 'b')
         self.assertDictEqual(automaton, final)
 
-
-    def test_two_loop(self):
-        """Test the deletion of state that has two paths leading to itself."""
-        automaton = {
-                'a': {'0': {'b'}},
-                'b': {'1': {'b'}, '2': {'b'}},
-        }
-        final = {'a': {}}
-        delete_state(automaton, 'b')
-        self.assertDictEqual(automaton, final)
-
     def test_two_state_loop_each(self):
         """Test the deletion of the second stat which goes back to the first
         one."""
