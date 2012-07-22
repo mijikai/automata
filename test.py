@@ -96,6 +96,17 @@ class DeleteStateTest(unittest.TestCase):
         delete_state(automaton, 'b')
         self.assertDictEqual(automaton, final)
 
+    def test_branching_loop(self):
+        """Test the deletion of state that has alternatives to itself."""
+        automaton = {
+                'a': {'0': {'b'}},
+                'b': {'1': {'b'}, '2': {'b'}, '3': {'c'}},
+                'c': {},
+        }
+        final = {'a': {'0(1|2)*3': {'c'}}, 'c': {}}
+        delete_state(automaton, 'b')
+        self.assertDictEqual(automaton, final)
+
 
 class ReversePathTest(unittest.TestCase):
     def test_looping_state(self):

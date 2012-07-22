@@ -23,10 +23,18 @@ def delete_state(automaton, state):
     looping_alter = []
     for prev_label, prev_set in rev[state].items():
         if state in prev_set:
-            looping_alter.append('{}*'.format(prev_label))
+            looping_alter.append('{}'.format(prev_label))
             prev_set.remove(state)
 
-    looping = '|'.join(looping_alter)
+    if looping_alter:
+        if len(looping_alter) > 1:
+            template = '({})*'
+        else:
+            template = '{}*'
+    else:
+        template = '{}'
+
+    looping = template.format('|'.join(looping_alter))
 
     for next_set in automaton[state].values():
         if state in next_set:
