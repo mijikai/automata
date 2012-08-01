@@ -21,17 +21,8 @@ def auto2regex(automaton, start_state, final_states):
             if t_s in (start_state, final):
                 continue
             delete_state(temp, t_s)
-        length = len(temp.keys())
-        if length == 1:
-            if temp[start_state]:
-                if len(temp[start_state]) == 1:
-                    template = '{}*'
-                else:
-                    template = '({})*'
-            else:
-                template = '{}'
-            result.append(template.format('|'.join(sorted(temp[start_state]))))
-        elif length == 2:
+
+        if 1 <= len(temp.keys()) <= 2:
             # Add a state before the start and after the final so that we can
             # delete the initial and final state and form the final regex.
 
@@ -39,14 +30,23 @@ def auto2regex(automaton, start_state, final_states):
             post_final = '{}{}f'.format(start_state, final)
 
             temp[pre_start] = {'': {start_state}}
-            delete_state(temp, start_state)
 
             temp[final].setdefault('', set())
             temp[final][''].add(post_final)
             temp[post_final] = {}
+
+            # Delete the state only once if the starting and final state
+            # are equal
+            if start_state != final:
+                delete_state(temp, start_state)
             delete_state(temp, final)
 
-            result.append(*temp[pre_start])
+            if not len(temp[pre_start]):
+                # We have no where to go so the regex is a null string
+                result.append('')
+            else:
+                # Will raise an error if temp has more than one label
+                result.append(*temp[pre_start])
         else:
             raise Exception(
                 'Maximum length of two is the supposed final state')
