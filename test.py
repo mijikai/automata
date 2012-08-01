@@ -19,7 +19,6 @@ class Auto2Regex(unittest.TestCase):
         }
         self.assertEqual(auto2regex(automaton, 'a', {'a'}), '0*')
 
-    @unittest.skip('Skip temporarily for delete_state')
     def test_three_state_branching(self):
         """Test an automaton that accepts either 0 or 1 only."""
         automaton = {
@@ -28,6 +27,13 @@ class Auto2Regex(unittest.TestCase):
                 'c': {},
         }
         self.assertEqual(auto2regex(automaton, 'a', {'b', 'c'}), '0|1')
+
+    def test_loop_each_other(self):
+        automaton = {
+                'a': {'0': {'a'}, '1': {'b'}},
+                'b': {'2': {'b'}, '3': {'a'}}
+        }
+        self.assertEqual(auto2regex(automaton, 'a', {'b'}), '0*1(2|30*1)*')
 
 
 class DeleteStateTest(unittest.TestCase):

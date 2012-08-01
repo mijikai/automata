@@ -1,3 +1,6 @@
+from copy import deepcopy
+
+
 def auto2regex(automaton, start_state, final_states):
     """Converts an automaton into a regular expression compatible with Perl
     regular expression. Automaton is a dictionary whose keys are the names of
@@ -6,13 +9,49 @@ def auto2regex(automaton, start_state, final_states):
     which are sets containing the name of the next states."""
 
 
-    states = automaton[start_state]
     result = []
-    for label, next_states in states.items():
-        for s in next_states:
-            if s == start_state:
-                result.append('{}*'.format(label))
-    return ''.join(result)
+    for s in tuple(automaton):
+        if s == start_state or s in final_states:
+            continue
+        delete_state(automaton, s)
+
+    for final in final_states:
+        temp = deepcopy(automaton)
+        for t_s in tuple(temp):
+            if t_s in (start_state, final):
+                continue
+            delete_state(temp, t_s)
+        length = len(temp.keys())
+        if length == 1:
+            if temp[start_state]:
+                if len(temp[start_state]) == 1:
+                    template = '{}*'
+                else:
+                    template = '({})*'
+            else:
+                template = '{}'
+            result.append(template.format('|'.join(sorted(temp[start_state]))))
+        elif length == 2:
+            # Add a state before the start and after the final so that we can
+            # delete the initial and final state and form the final regex.
+
+            pre_start = '{}{}-1'.format(start_state, final)
+            post_final = '{}f'.format(pre_start)
+
+            temp[pre_start] = {'': {start_state}}
+            delete_state(temp, start_state)
+
+            temp[final].setdefault('', set())
+            temp[final][''].add(post_final)
+            temp[post_final] = {}
+            delete_state(temp, final)
+
+            result.append(*temp[pre_start])
+        else:
+            raise Exception(
+                'Maximum length of two is the supposed final state')
+
+    return '|'.join(sorted(result))
 
 
 def delete_state(automaton, state):
