@@ -35,8 +35,8 @@ def auto2regex(automaton, start_state, final_states):
             # Add a state before the start and after the final so that we can
             # delete the initial and final state and form the final regex.
 
-            pre_start = '{}{}-1'.format(start_state, final)
-            post_final = '{}f'.format(pre_start)
+            pre_start = '{}{}s'.format(start_state, final)
+            post_final = '{}{}f'.format(start_state, final)
 
             temp[pre_start] = {'': {start_state}}
             delete_state(temp, start_state)
