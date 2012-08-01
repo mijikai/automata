@@ -119,6 +119,14 @@ class DeleteStateTest(unittest.TestCase):
         delete_state(automaton, 'b')
         self.assertDictEqual(automaton, final)
 
+    def test_loop_each_other(self):
+        automaton = {
+                'a': {'': {'b'}},
+                'b': {'1': {'c'}, '2': {'c'}, '3': {'b'}, '4': {'b'}},
+                'c': {'5': {'b'}, '6': {'c'}}
+        }
+        delete_state(automaton, 'b')
+
 
 class ReversePathTest(unittest.TestCase):
     def test_looping_state(self):
